@@ -217,7 +217,14 @@ class BhoonidhiDockWidget(QDockWidget):
     def _build_results_table(self) -> QTableWidget:
         self.results_table = QTableWidget(0, 6)
         self.results_table.setHorizontalHeaderLabels(
-            ["Select to Download", "Quick View", "Scene ID", "Date", "Satellite/Sensor", "Availability"]
+            [
+                "Select to Download",
+                "Quick View",
+                "Scene ID",
+                "Date",
+                "Satellite/Sensor",
+                "Availability",
+            ]
         )
         self.results_table.horizontalHeader().setSectionResizeMode(QHeaderView.Interactive)
         self.results_table.horizontalScrollBar().setEnabled(True)
@@ -477,7 +484,7 @@ class BhoonidhiDockWidget(QDockWidget):
         self.next_page_button.setEnabled(self._current_page < total_pages - 1)
 
         start = self._current_page * PAGE_SIZE
-        page_scenes = self._all_scenes[start : start + PAGE_SIZE]
+        page_scenes = self._all_scenes[start:start + PAGE_SIZE]
 
         self.results_table.blockSignals(True)
         self.results_table.setRowCount(0)
@@ -667,7 +674,10 @@ class BhoonidhiDockWidget(QDockWidget):
 
         name = self.details_name_edit.text().strip()
         description = self.details_description_edit.toPlainText().strip()
-        if query_api.rename_query(self._current_query.slug, name=name or None, description=description or None):
+        saved = query_api.rename_query(
+            self._current_query.slug, name=name or None, description=description or None
+        )
+        if saved:
             self._current_query.name = name or self._current_query.name
             self._current_query.description = description or self._current_query.description
             self.status_label.setText(f"Saved details for '{self._current_query.slug}'.")

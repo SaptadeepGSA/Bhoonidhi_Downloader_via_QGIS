@@ -123,7 +123,8 @@ class BhoonidhiPlugin:
         for slug in list(self._session_slugs):
             try:
                 query_api.delete_query(slug)
-            except Exception:
+            # Best-effort cleanup on unload: must not block it.
+            except Exception:  # nosec B110
                 pass
         self._session_slugs.clear()
 

@@ -5,7 +5,7 @@ from __future__ import annotations
 
 from qgis.core import QgsCoordinateTransform, QgsProject, QgsRectangle, QgsWkbTypes
 from qgis.gui import QgsMapTool, QgsRubberBand
-from qgis.PyQt.QtCore import Qt, pyqtSignal
+from qgis.PyQt.QtCore import pyqtSignal
 from qgis.PyQt.QtGui import QColor
 
 

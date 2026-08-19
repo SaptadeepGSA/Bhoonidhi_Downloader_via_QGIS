@@ -46,7 +46,9 @@ def _footprint_geometry(scene: dict) -> QgsGeometry | None:
     return QgsGeometry.fromPolygonXY([ring])
 
 
-def build_scene_footprint_layer(scenes: list[dict], layer_name: str = _LAYER_NAME) -> QgsVectorLayer:
+def build_scene_footprint_layer(
+    scenes: list[dict], layer_name: str = _LAYER_NAME
+) -> QgsVectorLayer:
     from bhoonidhi_downloader.core.search.availability import AVAILABILITY_LABEL, availability_of
 
     layer = QgsVectorLayer("Polygon?crs=EPSG:4326", layer_name, "memory")

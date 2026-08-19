@@ -33,7 +33,8 @@ class _FlushSafeStream:
         if callable(flush):
             try:
                 flush()
-            except Exception:
+            # Best-effort flush shim: must not crash the caller.
+            except Exception:  # nosec B110
                 pass
 
     def isatty(self):

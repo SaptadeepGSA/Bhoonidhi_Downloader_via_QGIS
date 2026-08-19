@@ -3,7 +3,6 @@ authenticates via api.session.login()."""
 
 from __future__ import annotations
 
-from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtWidgets import (
     QApplication,
     QDialog,

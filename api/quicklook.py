@@ -16,6 +16,7 @@ from __future__ import annotations
 import os
 from typing import Any
 
+
 def quicklook_url(scene: dict[str, Any]) -> str | None:
     from bhoonidhi_downloader.core.search.utils import get_quicklook_url
 
