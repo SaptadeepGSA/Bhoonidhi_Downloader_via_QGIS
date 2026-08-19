@@ -18,9 +18,9 @@ about=A QGIS front-end for the bhoonidhi-downloader library (https://github.com/
     PyPI package into QGIS's Python the first time it runs (with your
     confirmation), since it is not bundled in the zip.
 
-tracker=https://github.com/REPLACE_ME/bhoonidhi-downloader-qgis/issues
-repository=https://github.com/REPLACE_ME/bhoonidhi-downloader-qgis
-homepage=https://github.com/REPLACE_ME/bhoonidhi-downloader-qgis
+tracker=https://github.com/SaptadeepGSA/Bhoonidhi_Downloader_via_QGIS/issues
+repository=https://github.com/SaptadeepGSA/Bhoonidhi_Downloader_via_QGIS
+homepage=https://github.com/SaptadeepGSA/Bhoonidhi_Downloader_via_QGIS
 
 tags=bhoonidhi,isro,satellite,remote sensing,download,imagery,nrsc
 
