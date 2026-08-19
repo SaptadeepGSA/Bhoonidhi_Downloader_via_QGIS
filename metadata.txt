@@ -1,0 +1,32 @@
+[general]
+name=Bhoonidhi Downloader
+qgisMinimumVersion=3.28
+description=Search, browse and download open-access satellite imagery from ISRO's Bhoonidhi portal directly inside QGIS.
+version=0.1.0
+author=SatSure
+email=saptadeep@satsure.co
+
+about=A QGIS front-end for the bhoonidhi-downloader library (https://github.com/geovicco-dev/bhoonidhi-downloader,
+    MIT license). Log in with your Bhoonidhi credentials (never stored to disk --
+    the session lives only in memory for the current QGIS session and is
+    discarded on close), pick a direct-download satellite/sensor, set a date
+    range and a spatial filter (manual bounding box or a drawn rectangle),
+    search the archive, preview georeferenced scene quicklooks on the map,
+    and download selected scenes. Each search is saved as a revisitable
+    "query" for the session and cleaned up automatically when QGIS closes.
+    External dependency: this plugin installs the bhoonidhi-downloader
+    PyPI package into QGIS's Python the first time it runs (with your
+    confirmation), since it is not bundled in the zip.
+
+tracker=https://github.com/REPLACE_ME/bhoonidhi-downloader-qgis/issues
+repository=https://github.com/REPLACE_ME/bhoonidhi-downloader-qgis
+homepage=https://github.com/REPLACE_ME/bhoonidhi-downloader-qgis
+
+tags=bhoonidhi,isro,satellite,remote sensing,download,imagery,nrsc
+
+category=Raster
+icon=icon.png
+experimental=True
+deprecated=False
+server=False
+hasProcessingProvider=False
