@@ -75,8 +75,10 @@ class ExportDialog(QDialog):
         self.log_view.setMaximumHeight(200)
         layout.addWidget(self.log_view)
 
-        buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
-        buttons.button(QDialogButtonBox.Ok).setText("Download")
+        buttons = QDialogButtonBox(
+            QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel
+        )
+        buttons.button(QDialogButtonBox.StandardButton.Ok).setText("Download")
         buttons.accepted.connect(self._on_download_clicked)
         buttons.rejected.connect(self.reject)
         layout.addWidget(buttons)
@@ -96,7 +98,7 @@ class ExportDialog(QDialog):
             return
         os.makedirs(out_dir, exist_ok=True)
 
-        self._buttons.button(QDialogButtonBox.Ok).setEnabled(False)
+        self._buttons.button(QDialogButtonBox.StandardButton.Ok).setEnabled(False)
         self.progress_bar.setVisible(True)
         self.log_view.append(f"Downloading {len(self.scenes)} scene(s) to {out_dir}...")
 
@@ -109,12 +111,12 @@ class ExportDialog(QDialog):
 
     def _on_download_failed(self, message: str):
         self.progress_bar.setVisible(False)
-        self._buttons.button(QDialogButtonBox.Ok).setEnabled(True)
+        self._buttons.button(QDialogButtonBox.StandardButton.Ok).setEnabled(True)
         self.log_view.append(f"Download failed: {message}")
 
     def _on_download_finished(self, result):
         self.progress_bar.setVisible(False)
-        self._buttons.button(QDialogButtonBox.Ok).setEnabled(True)
+        self._buttons.button(QDialogButtonBox.StandardButton.Ok).setEnabled(True)
 
         if not result.ok:
             if result.needs_reauth:

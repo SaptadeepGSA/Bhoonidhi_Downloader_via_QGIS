@@ -226,11 +226,12 @@ class BhoonidhiDockWidget(QDockWidget):
                 "Availability",
             ]
         )
-        self.results_table.horizontalHeader().setSectionResizeMode(QHeaderView.Interactive)
+        header = self.results_table.horizontalHeader()
+        header.setSectionResizeMode(QHeaderView.ResizeMode.Interactive)
         self.results_table.horizontalScrollBar().setEnabled(True)
-        self.results_table.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
-        self.results_table.setSelectionBehavior(QAbstractItemView.SelectRows)
-        self.results_table.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.results_table.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
+        self.results_table.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
+        self.results_table.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
         self.results_table.itemChanged.connect(self._on_table_item_changed)
         return self.results_table
 
@@ -495,20 +496,24 @@ class BhoonidhiDockWidget(QDockWidget):
             scene_id = str(scene.get("ID", ""))
 
             check_item = QTableWidgetItem()
-            check_item.setFlags(Qt.ItemIsUserCheckable | Qt.ItemIsEnabled)
+            check_item.setFlags(Qt.ItemFlag.ItemIsUserCheckable | Qt.ItemFlag.ItemIsEnabled)
             downloadable = is_downloadable(scene)
-            check_item.setCheckState(
-                Qt.Checked if scene_id in self._checked_scene_ids else Qt.Unchecked
-            )
+            if scene_id in self._checked_scene_ids:
+                checked = Qt.CheckState.Checked
+            else:
+                checked = Qt.CheckState.Unchecked
+            check_item.setCheckState(checked)
             if not downloadable:
-                check_item.setFlags(Qt.NoItemFlags)
+                check_item.setFlags(Qt.ItemFlag.NoItemFlags)
             self.results_table.setItem(row, 0, check_item)
 
             quicklook_item = QTableWidgetItem()
-            quicklook_item.setFlags(Qt.ItemIsUserCheckable | Qt.ItemIsEnabled)
-            quicklook_item.setCheckState(
-                Qt.Checked if scene_id in self._quicklook_layer_ids else Qt.Unchecked
-            )
+            quicklook_item.setFlags(Qt.ItemFlag.ItemIsUserCheckable | Qt.ItemFlag.ItemIsEnabled)
+            if scene_id in self._quicklook_layer_ids:
+                quicklook_checked = Qt.CheckState.Checked
+            else:
+                quicklook_checked = Qt.CheckState.Unchecked
+            quicklook_item.setCheckState(quicklook_checked)
             self.results_table.setItem(row, 1, quicklook_item)
 
             id_item = QTableWidgetItem(scene_id)
@@ -579,13 +584,13 @@ class BhoonidhiDockWidget(QDockWidget):
         scene_id = str(scene.get("ID", ""))
 
         if item.column() == 0:
-            if item.checkState() == Qt.Checked:
+            if item.checkState() == Qt.CheckState.Checked:
                 self._checked_scene_ids.add(scene_id)
             else:
                 self._checked_scene_ids.discard(scene_id)
             self._refresh_query_details_panel()
         elif item.column() == 1:
-            if item.checkState() == Qt.Checked:
+            if item.checkState() == Qt.CheckState.Checked:
                 self._start_quicklook(scene)
             else:
                 self._remove_quicklook_layer(scene_id)
