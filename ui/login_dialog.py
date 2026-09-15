@@ -33,7 +33,7 @@ class LoginDialog(QDialog):
         form = QFormLayout()
         self.username_edit = QLineEdit()
         self.password_edit = QLineEdit()
-        self.password_edit.setEchoMode(QLineEdit.Password)
+        self.password_edit.setEchoMode(QLineEdit.EchoMode.Password)
         form.addRow("Username", self.username_edit)
         form.addRow("Password", self.password_edit)
         layout.addLayout(form)
@@ -43,7 +43,9 @@ class LoginDialog(QDialog):
         self.status_label.setWordWrap(True)
         layout.addWidget(self.status_label)
 
-        buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        buttons = QDialogButtonBox(
+            QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel
+        )
         buttons.accepted.connect(self._on_login)
         buttons.rejected.connect(self.reject)
         layout.addWidget(buttons)
@@ -82,4 +84,4 @@ class LoginDialog(QDialog):
             parent,
             message="Log in with your Bhoonidhi portal credentials to continue.",
         )
-        return dialog.exec_() == QDialog.Accepted
+        return dialog.exec() == QDialog.DialogCode.Accepted

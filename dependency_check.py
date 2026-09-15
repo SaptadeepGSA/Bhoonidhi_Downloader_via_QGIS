@@ -34,9 +34,9 @@ def ensure_installed(parent=None) -> bool:
         f"environment.\n\nInstall it now with:\n"
         f"  {sys.executable} -m pip install {REQUIRED_PACKAGE}\n\n"
         "Proceed?",
-        QMessageBox.Yes | QMessageBox.No,
+        QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
     )
-    if reply != QMessageBox.Yes:
+    if reply != QMessageBox.StandardButton.Yes:
         return False
 
     progress = QProgressDialog(

@@ -100,7 +100,7 @@ class BhoonidhiPlugin:
         self.dock_widget.querySlugDeleted.connect(self._on_slug_deleted)
         self.dock_widget.exportRequested.connect(self._on_export_requested)
         self.dock_widget.visibilityChanged.connect(self._on_dock_visibility_changed)
-        self.iface.addDockWidget(Qt.RightDockWidgetArea, self.dock_widget)
+        self.iface.addDockWidget(Qt.DockWidgetArea.RightDockWidgetArea, self.dock_widget)
 
     def _on_dock_visibility_changed(self, visible: bool):
         if self.action is not None:
@@ -135,7 +135,7 @@ class BhoonidhiPlugin:
         from .ui.export_dialog import ExportDialog
 
         dialog = ExportDialog(self.iface, slug, scenes, aoi_bbox, self.iface.mainWindow())
-        dialog.exec_()
+        dialog.exec()
 
         if getattr(dialog, "parent_needs_reauth", False):
             from .ui.login_dialog import LoginDialog
@@ -144,4 +144,4 @@ class BhoonidhiPlugin:
                 retry_dialog = ExportDialog(
                     self.iface, slug, scenes, aoi_bbox, self.iface.mainWindow()
                 )
-                retry_dialog.exec_()
+                retry_dialog.exec()

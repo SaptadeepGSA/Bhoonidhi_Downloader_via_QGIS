@@ -17,7 +17,7 @@ from qgis.core import (
     QgsRendererCategory,
     QgsVectorLayer,
 )
-from qgis.PyQt.QtCore import QVariant
+from qgis.PyQt.QtCore import QMetaType
 from qgis.PyQt.QtGui import QColor
 
 from ..api.rasters import scene_bbox
@@ -55,11 +55,11 @@ def build_scene_footprint_layer(
     provider = layer.dataProvider()
     provider.addAttributes(
         [
-            QgsField("scene_id", QVariant.String),
-            QgsField("date", QVariant.String),
-            QgsField("satellite", QVariant.String),
-            QgsField("sensor", QVariant.String),
-            QgsField("availability", QVariant.String),
+            QgsField("scene_id", QMetaType.Type.QString),
+            QgsField("date", QMetaType.Type.QString),
+            QgsField("satellite", QMetaType.Type.QString),
+            QgsField("sensor", QMetaType.Type.QString),
+            QgsField("availability", QMetaType.Type.QString),
         ]
     )
     layer.updateFields()

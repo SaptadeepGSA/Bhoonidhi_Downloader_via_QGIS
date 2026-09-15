@@ -19,7 +19,7 @@ class ExtentDrawTool(QgsMapTool):
     def __init__(self, canvas):
         super().__init__(canvas)
         self.canvas = canvas
-        self.rubber_band = QgsRubberBand(canvas, QgsWkbTypes.PolygonGeometry)
+        self.rubber_band = QgsRubberBand(canvas, QgsWkbTypes.GeometryType.PolygonGeometry)
         self.rubber_band.setColor(QColor(255, 0, 0, 60))
         self.rubber_band.setStrokeColor(QColor(255, 0, 0, 200))
         self.rubber_band.setWidth(2)
@@ -29,7 +29,7 @@ class ExtentDrawTool(QgsMapTool):
     def canvasPressEvent(self, event):
         self._start_point = self.toMapCoordinates(event.pos())
         self._dragging = True
-        self.rubber_band.reset(QgsWkbTypes.PolygonGeometry)
+        self.rubber_band.reset(QgsWkbTypes.GeometryType.PolygonGeometry)
 
     def canvasMoveEvent(self, event):
         if not self._dragging or self._start_point is None:
@@ -52,7 +52,7 @@ class ExtentDrawTool(QgsMapTool):
     def _update_rubber_band(self, p1, p2):
         rect = QgsRectangle(p1, p2)
         rect.normalize()
-        self.rubber_band.reset(QgsWkbTypes.PolygonGeometry)
+        self.rubber_band.reset(QgsWkbTypes.GeometryType.PolygonGeometry)
         points = [
             rect.xMinimum(), rect.yMinimum(),
             rect.xMaximum(), rect.yMinimum(),
@@ -67,7 +67,7 @@ class ExtentDrawTool(QgsMapTool):
         self.rubber_band.addPoint(QgsPointXY(points[6], points[7]), True)
 
     def clear(self):
-        self.rubber_band.reset(QgsWkbTypes.PolygonGeometry)
+        self.rubber_band.reset(QgsWkbTypes.GeometryType.PolygonGeometry)
         self._start_point = None
         self._dragging = False
 
