@@ -2,7 +2,7 @@
 name=Bhoonidhi Downloader
 qgisMinimumVersion=3.28
 description=Search, browse and download open-access satellite imagery from ISRO's Bhoonidhi portal directly inside QGIS.
-version=0.1.0
+version=0.1.1
 author=Saptadeep Deshmukh
 email=pl.saptadeep492d@gmail.com
 
@@ -26,7 +26,7 @@ tags=bhoonidhi,isro,satellite,remote sensing,download,imagery,nrsc
 
 category=Raster
 icon=icon.png
-experimental=True
+experimental=False
 deprecated=False
 server=False
 hasProcessingProvider=False
