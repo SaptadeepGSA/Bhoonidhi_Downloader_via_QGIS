@@ -7,6 +7,7 @@ the CLI's own Ready/Archived/OnOrder/Priced palette.
 from __future__ import annotations
 
 from qgis.core import (
+    Qgis,
     QgsCategorizedSymbolRenderer,
     QgsFeature,
     QgsField,
@@ -17,10 +18,22 @@ from qgis.core import (
     QgsRendererCategory,
     QgsVectorLayer,
 )
-from qgis.PyQt.QtCore import QMetaType
 from qgis.PyQt.QtGui import QColor
 
 from ..api.rasters import scene_bbox
+
+# QgsField's QVariant.Type-based constructor was deprecated in QGIS 3.38 in
+# favor of a QMetaType.Type-based one; each only reliably exists on its own
+# side of that line (QVariant itself doesn't survive into Qt6 / QGIS 4.0).
+# Pick whichever the running QGIS actually supports instead of assuming one.
+if Qgis.QGIS_VERSION_INT >= 33800:
+    from qgis.PyQt.QtCore import QMetaType
+
+    _STRING_FIELD_TYPE = QMetaType.Type.QString
+else:
+    from qgis.PyQt.QtCore import QVariant
+
+    _STRING_FIELD_TYPE = QVariant.String
 
 _AVAILABILITY_COLORS = {
     "Ready": QColor(34, 139, 34),
@@ -55,11 +68,11 @@ def build_scene_footprint_layer(
     provider = layer.dataProvider()
     provider.addAttributes(
         [
-            QgsField("scene_id", QMetaType.Type.QString),
-            QgsField("date", QMetaType.Type.QString),
-            QgsField("satellite", QMetaType.Type.QString),
-            QgsField("sensor", QMetaType.Type.QString),
-            QgsField("availability", QMetaType.Type.QString),
+            QgsField("scene_id", _STRING_FIELD_TYPE),
+            QgsField("date", _STRING_FIELD_TYPE),
+            QgsField("satellite", _STRING_FIELD_TYPE),
+            QgsField("sensor", _STRING_FIELD_TYPE),
+            QgsField("availability", _STRING_FIELD_TYPE),
         ]
     )
     layer.updateFields()
