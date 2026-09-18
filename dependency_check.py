@@ -29,7 +29,8 @@ or found while reviewing the plugin on Windows / QGIS 3.44 and 4.2:
   startup if it already existed then, so it is added explicitly afterwards.
 - pip failures are translated into a plain-language reason plus what to do
   (offline/proxy, locked file, PEP 668, missing pip, no wheel, ...). The
-  check re-runs every time QGIS starts, so "fix it, restart QGIS" works.
+  check runs again each time QGIS starts and each time the toolbar icon is
+  clicked, so "fix the cause, restart QGIS" (or click the icon) is enough.
 """
 
 from __future__ import annotations
@@ -370,8 +371,8 @@ def explain_failure(pip_log: str, state: str, detail: str) -> tuple[str, str]:
             return (
                 "A file the install needs to replace is locked by a program that is running "
                 "(often another QGIS plugin, or a second QGIS window, has it loaded).",
-                "Close other QGIS windows and restart QGIS -- the install is retried "
-                "automatically on the next start, before other plugins load it.",
+                "Close other QGIS windows and restart QGIS -- the plugin tries the install "
+                "again automatically on the next start, before other plugins load the file.",
             )
         return (
             "No permission to write to the Python packages folder.",
@@ -436,8 +437,10 @@ def _show_failure(parent, reason: str, advice: str, diagnostics: str) -> None:
         f"('{DIST_NAME}').\n\nWhy: {reason}\n\nWhat to do: {advice}\n\n"
         "To install it manually, run this in a terminal (OSGeo4W Shell on Windows) "
         f"that uses QGIS's Python:\n\n    {_manual_command()}\n\n"
-        "Then restart QGIS. The plugin checks again every time QGIS starts, so nothing "
-        "else is needed.",
+        "Then restart QGIS (or just click the Bhoonidhi toolbar icon again). The plugin "
+        "re-checks its dependency each time QGIS starts and each time you click its icon, "
+        "and tries the automatic install again -- so once the problem is fixed there is "
+        "nothing else to do.",
         QMessageBox.StandardButton.Ok,
         parent,
     )
@@ -445,20 +448,31 @@ def _show_failure(parent, reason: str, advice: str, diagnostics: str) -> None:
     box.exec()
 
 
-def _notify_success(parent, version: str) -> None:
-    text = f"'{DIST_NAME}' {version} is installed. Click the toolbar icon to start."
-    try:
-        from qgis.utils import iface
+_DEPENDENCY_DISTS = ("pydantic", "requests", "rich", "typer", "tabulate")
 
-        if iface is not None:
-            iface.messageBar().pushMessage(
-                "Bhoonidhi Downloader", text, level=Qgis.MessageLevel.Success, duration=10
-            )
-            return
-    # Purely cosmetic: fall back to a dialog if the message bar isn't available.
-    except Exception:  # nosec B110
-        pass
-    QMessageBox.information(parent, "Bhoonidhi Downloader", text)
+
+def _resolved_summary(version: str) -> str:
+    """One line per package that is now installed, with its version."""
+    lines = [f"  ✔  {DIST_NAME} {version}"]
+    for name in _DEPENDENCY_DISTS:
+        try:
+            lines.append(f"  ✔  {name} {importlib.metadata.version(name)}")
+        except importlib.metadata.PackageNotFoundError:
+            continue
+    return "\n".join(lines)
+
+
+def _notify_success(parent, version: str) -> None:
+    """A modal dialog (not a transient message-bar line that disappears after a
+    few seconds) so it is unmistakable that setup finished."""
+    QMessageBox.information(
+        parent,
+        "Bhoonidhi Downloader — all dependencies resolved",
+        "All dependencies resolved.\n\n"
+        "Everything Bhoonidhi Downloader needs is installed and loaded:\n\n"
+        f"{_resolved_summary(version)}\n\n"
+        "You can now click the Bhoonidhi Downloader toolbar icon to start.",
+    )
 
 
 # ---------------------------------------------------------------------------

@@ -18,8 +18,10 @@ about=A QGIS front-end for the bhoonidhi-downloader library (https://github.com/
     External dependency: the bhoonidhi-downloader PyPI package (needs Python 3.10+,
     i.e. QGIS 3.34 or newer). The plugin installs it automatically with pip into
     your user Python folder the first time it runs (internet needed, no admin
-    rights). If that fails it tells you why and how to install it manually;
-    it retries on every QGIS start. Works with QGIS 3.34 through 4.x.
+    rights) and confirms with an "All dependencies resolved" message. If that
+    fails it tells you why and how to install it manually; the plugin re-checks
+    each time QGIS starts (or you click its toolbar icon) and tries again
+    automatically. Works with QGIS 3.34 through 4.x.
 
 tracker=https://github.com/SaptadeepGSA/Bhoonidhi_Downloader_via_QGIS/issues
 repository=https://github.com/SaptadeepGSA/Bhoonidhi_Downloader_via_QGIS
