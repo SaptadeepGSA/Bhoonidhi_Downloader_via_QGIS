@@ -3,7 +3,7 @@ name=Bhoonidhi Downloader
 qgisMinimumVersion=3.34
 qgisMaximumVersion=4.99
 description=Search, browse and download open-access satellite imagery from ISRO's Bhoonidhi portal directly inside QGIS.
-version=0.1.7
+version=0.1.8
 author=Saptadeep Deshmukh
 email=pl.saptadeep492d@gmail.com
 
