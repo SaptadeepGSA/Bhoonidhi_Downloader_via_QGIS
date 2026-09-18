@@ -40,6 +40,7 @@ class ExportDialog(QDialog):
         self.scenes = scenes
         self.aoi_bbox = aoi_bbox
         self._download_worker: DownloadWorker | None = None
+        self._downloading = False
 
         self.setWindowTitle(f"Export — query '{slug}'")
         self.resize(520, 460)
@@ -98,7 +99,9 @@ class ExportDialog(QDialog):
             return
         os.makedirs(out_dir, exist_ok=True)
 
+        self._downloading = True
         self._buttons.button(QDialogButtonBox.StandardButton.Ok).setEnabled(False)
+        self._buttons.button(QDialogButtonBox.StandardButton.Cancel).setEnabled(False)
         self.progress_bar.setVisible(True)
         self.log_view.append(f"Downloading {len(self.scenes)} scene(s) to {out_dir}...")
 
@@ -109,12 +112,38 @@ class ExportDialog(QDialog):
         self._download_worker.failed.connect(self._on_download_failed)
         self._download_worker.start()
 
+    def _end_download(self):
+        self._downloading = False
+        self._buttons.button(QDialogButtonBox.StandardButton.Cancel).setEnabled(True)
+        if self._download_worker is not None:
+            self._download_worker.wait(2000)
+
+    def reject(self):
+        # Closing while the worker thread runs would destroy a running QThread
+        # (Qt aborts). The download can't be cancelled mid-way, so wait for it.
+        if self._downloading:
+            QMessageBox.information(
+                self,
+                "Bhoonidhi Downloader",
+                "A download is in progress -- please wait for it to finish.",
+            )
+            return
+        super().reject()
+
+    def closeEvent(self, event):
+        if self._downloading:
+            event.ignore()
+            return
+        super().closeEvent(event)
+
     def _on_download_failed(self, message: str):
+        self._end_download()
         self.progress_bar.setVisible(False)
         self._buttons.button(QDialogButtonBox.StandardButton.Ok).setEnabled(True)
         self.log_view.append(f"Download failed: {message}")
 
     def _on_download_finished(self, result):
+        self._end_download()
         self.progress_bar.setVisible(False)
         self._buttons.button(QDialogButtonBox.StandardButton.Ok).setEnabled(True)
 

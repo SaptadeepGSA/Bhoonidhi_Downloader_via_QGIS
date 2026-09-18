@@ -44,7 +44,9 @@ class BhoonidhiPlugin:
 
         reset_client()  # purge any pre-existing on-disk session (req #4)
 
-        QTimer.singleShot(0, self._ensure_dependencies_ready)
+        # Give QGIS time to finish starting (and other plugins to load) before
+        # a progress dialog appears; also lets the event loop run.
+        QTimer.singleShot(1500, self._ensure_dependencies_ready)
 
     def _ensure_dependencies_ready(self):
         from .dependency_check import ensure_installed
@@ -53,6 +55,7 @@ class BhoonidhiPlugin:
 
     def unload(self):
         if self.dock_widget is not None:
+            self.dock_widget.shutdown()
             self.iface.removeDockWidget(self.dock_widget)
             self.dock_widget.deleteLater()
             self.dock_widget = None
@@ -75,7 +78,16 @@ class BhoonidhiPlugin:
                 self.dock_widget.hide()
             return
 
-        from .dependency_check import ensure_installed
+        from .dependency_check import ensure_installed, is_installing
+
+        if is_installing():
+            self.iface.messageBar().pushMessage(
+                "Bhoonidhi Downloader",
+                "Setup is still installing its dependency -- try again in a moment.",
+                duration=6,
+            )
+            self.action.setChecked(False)
+            return
 
         if not ensure_installed(self.iface.mainWindow()):
             self.action.setChecked(False)
