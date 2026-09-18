@@ -22,7 +22,7 @@ class LoginResult:
 
 def login(username: str, password: str) -> LoginResult:
     """Authenticate and hold the session in memory only (save=False)."""
-    from .client_state import get_client
+    from .client_state import get_client, mark_logged_in
 
     if not username or not password:
         return LoginResult(ok=False, error="Username and password cannot be empty.")
@@ -30,6 +30,7 @@ def login(username: str, password: str) -> LoginResult:
     try:
         client = get_client()
         session = client.login(username, password, save=False)
+        mark_logged_in()
         return LoginResult(ok=True, username=session.username, user_email=session.user_email)
     except Exception as exc:  # BhoonidhiError, requests errors, etc.
         return LoginResult(ok=False, error=str(exc))

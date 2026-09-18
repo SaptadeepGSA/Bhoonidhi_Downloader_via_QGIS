@@ -6,6 +6,35 @@ from __future__ import annotations
 from qgis.PyQt.QtCore import QThread, pyqtSignal
 
 
+class ArchiveWorker(QThread):
+    """Fetches the satellite/sensor catalogue off the UI thread. Falls back to
+    the cached copy when the live fetch fails (offline / portal down)."""
+
+    finished_ok = pyqtSignal(list, bool, str)  # records, from_cache, note
+    failed = pyqtSignal(str)
+
+    def __init__(self, refresh: bool, parent=None):
+        super().__init__(parent)
+        self.refresh = refresh
+
+    def run(self):
+        from ..api import archive as archive_api
+
+        try:
+            self.finished_ok.emit(archive_api.archive_records(refresh=self.refresh), False, "")
+            return
+        except Exception as live_error:
+            live_message = str(live_error)
+        try:
+            cached = archive_api.archive_records(refresh=False) if self.refresh else []
+        except Exception:
+            cached = []
+        if cached:
+            self.finished_ok.emit(cached, True, live_message)
+        else:
+            self.failed.emit(live_message)
+
+
 class SearchWorker(QThread):
     finished_ok = pyqtSignal(object)  # SearchResult
     failed = pyqtSignal(str)

@@ -42,7 +42,7 @@ from qgis.PyQt.QtWidgets import (
 from .extent_tool import ExtentDrawTool, rectangle_to_wgs84
 from .scene_layer import replace_scene_footprint_layer
 from .widgets import DownwardComboBox
-from .workers import QuicklookWorker, RefreshWorker, SearchWorker
+from .workers import ArchiveWorker, QuicklookWorker, RefreshWorker, SearchWorker
 
 PAGE_SIZE = 10
 
@@ -75,6 +75,11 @@ class BhoonidhiDockWidget(QDockWidget):
         self._current_page = 0
         self._quicklook_layer_ids: dict[str, str] = {}
         self._quicklook_workers: dict[str, QuicklookWorker] = {}
+        # Strong refs to every running QThread until it has really finished:
+        # dropping the last Python reference to a running QThread makes Qt abort
+        # with "QThread: Destroyed while thread is still running".
+        self._live_workers: set = set()
+        self._archive_worker: ArchiveWorker | None = None
 
         self._build_ui()
         self._reload_archive(refresh=True)
@@ -306,23 +311,40 @@ class BhoonidhiDockWidget(QDockWidget):
     # on-disk cache)
     # ------------------------------------------------------------------
     def _reload_archive(self, refresh: bool):
+        if self._archive_worker is not None and self._archive_worker.isRunning():
+            return
+        self.status_label.setText("Loading satellite archive...")
+        self.refresh_archive_button.setEnabled(False)
+        self._archive_worker = ArchiveWorker(refresh)
+        self._archive_worker.finished_ok.connect(self._on_archive_loaded)
+        self._archive_worker.failed.connect(self._on_archive_failed)
+        self._start_worker(self._archive_worker)
+
+    def _on_archive_loaded(self, records: list, from_cache: bool, note: str):
         from ..api import archive as archive_api
 
-        self.status_label.setText("Loading satellite archive...")
-        try:
-            self._archive_records = archive_api.archive_records(refresh=refresh)
-        except Exception as exc:
-            self.status_label.setText(f"Could not load satellite archive: {exc}")
-            return
-
+        self.refresh_archive_button.setEnabled(True)
+        self._archive_records = records
+        previous = self.satellite_combo.currentText()
         self.satellite_combo.blockSignals(True)
         self.satellite_combo.clear()
-        self.satellite_combo.addItems(
-            archive_api.direct_download_satellites_from(self._archive_records)
-        )
+        self.satellite_combo.addItems(archive_api.direct_download_satellites_from(records))
+        if previous:
+            self.satellite_combo.setCurrentText(previous)
         self.satellite_combo.blockSignals(False)
         self._on_satellite_changed(self.satellite_combo.currentText())
-        self.status_label.setText("Archive loaded.")
+        if from_cache:
+            self.status_label.setText(
+                f"Couldn't reach Bhoonidhi ({note}); showing the last saved satellite list."
+            )
+        else:
+            self.status_label.setText("Archive loaded.")
+
+    def _on_archive_failed(self, message: str):
+        self.refresh_archive_button.setEnabled(True)
+        self.status_label.setText(
+            f"Could not load the satellite archive (check your internet connection): {message}"
+        )
 
     def _on_satellite_changed(self, satellite: str):
         from ..api import archive as archive_api
@@ -428,7 +450,7 @@ class BhoonidhiDockWidget(QDockWidget):
         self._search_worker = SearchWorker(params)
         self._search_worker.finished_ok.connect(self._on_search_finished)
         self._search_worker.failed.connect(self._on_search_failed)
-        self._search_worker.start()
+        self._start_worker(self._search_worker)
 
     def _on_search_failed(self, message: str):
         self.search_button.setEnabled(True)
@@ -628,7 +650,7 @@ class BhoonidhiDockWidget(QDockWidget):
         worker.failed.connect(self._on_quicklook_failed)
         self._quicklook_workers[scene_id] = worker
         self.status_label.setText(f"Fetching quicklook for {scene_id}...")
-        worker.start()
+        self._start_worker(worker)
 
     def _on_quicklook_ready(self, scene_id: str, tif_path: str):
         self._quicklook_workers.pop(scene_id, None)
@@ -739,7 +761,7 @@ class BhoonidhiDockWidget(QDockWidget):
         self._refresh_worker.failed.connect(
             lambda msg: self.status_label.setText(f"Refresh failed: {msg}")
         )
-        self._refresh_worker.start()
+        self._start_worker(self._refresh_worker)
 
     def _on_refresh_finished(self, result):
         if not result.ok:
@@ -797,6 +819,26 @@ class BhoonidhiDockWidget(QDockWidget):
         """Called by plugin.py after it has already deleted a slug (e.g. on
         unload) so the UI dict stays in sync."""
         self._session_queries.pop(slug, None)
+
+    # ------------------------------------------------------------------
+    # Worker thread lifetime
+    # ------------------------------------------------------------------
+    def _start_worker(self, worker):
+        self._live_workers.add(worker)
+        worker.finished.connect(self._on_worker_finished)
+        worker.start()
+
+    def _on_worker_finished(self):
+        worker = self.sender()
+        if worker is not None:
+            worker.wait(2000)  # let the OS thread fully exit before Python may free it
+            self._live_workers.discard(worker)
+
+    def shutdown(self):
+        """Called on plugin unload: give running workers a moment to finish so
+        Qt never destroys a QThread that is still running."""
+        for worker in list(self._live_workers):
+            worker.wait(3000)
 
     # ------------------------------------------------------------------
     # Export

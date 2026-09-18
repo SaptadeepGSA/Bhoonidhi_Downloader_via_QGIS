@@ -14,9 +14,19 @@ A QGIS front-end for [bhoonidhi-downloader](https://github.com/geovicco-dev/bhoo
 
 ## Requirements
 
-- QGIS ≥ 3.28
-- The [`bhoonidhi-downloader`](https://pypi.org/project/bhoonidhi-downloader/) PyPI package, installed automatically into QGIS's own Python the first time the plugin runs (you'll be asked to confirm before anything is installed).
+- **QGIS 3.34 or newer, including QGIS 4.x** (Qt5 and Qt6 builds). The `bhoonidhi-downloader` library needs Python 3.10+, which is what QGIS 3.34+ bundles on Windows and macOS (older QGIS builds ship Python 3.9 and cannot run it).
+- Windows, macOS or Linux, with an internet connection the first time (to download the library).
 - A Bhoonidhi portal account ([register here](https://bhoonidhi.nrsc.gov.in)).
+
+### Automatic dependency install
+
+The first time QGIS starts with this plugin, it installs [`bhoonidhi-downloader`](https://pypi.org/project/bhoonidhi-downloader/) (version 0.5.x) for you with `pip install --user` — into your own user Python folder, so **no administrator rights are needed**. It never compiles code inside QGIS and never opens extra QGIS windows.
+
+If it can't finish, a dialog explains *why* (no internet / proxy, a file locked by another plugin, pip missing, PEP 668 on some Linux distros, ...) and shows the one command to run manually:
+
+    python -m pip install --user "bhoonidhi-downloader>=0.5.2,<0.6"
+
+(use the *OSGeo4W Shell* on Windows, or a terminal that uses QGIS's Python on macOS/Linux), then restart QGIS. The check runs again on every start, so nothing else is needed.
 
 ## Installation
 

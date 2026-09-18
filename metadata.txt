@@ -1,9 +1,9 @@
 [general]
 name=Bhoonidhi Downloader
-qgisMinimumVersion=3.28
+qgisMinimumVersion=3.34
 qgisMaximumVersion=4.99
 description=Search, browse and download open-access satellite imagery from ISRO's Bhoonidhi portal directly inside QGIS.
-version=0.1.6
+version=0.1.7
 author=Saptadeep Deshmukh
 email=pl.saptadeep492d@gmail.com
 
@@ -15,9 +15,11 @@ about=A QGIS front-end for the bhoonidhi-downloader library (https://github.com/
     search the archive, preview georeferenced scene quicklooks on the map,
     and download selected scenes. Each search is saved as a revisitable
     "query" for the session and cleaned up automatically when QGIS closes.
-    External dependency: this plugin installs the bhoonidhi-downloader
-    PyPI package into QGIS's Python the first time it runs (with your
-    confirmation), since it is not bundled in the zip.
+    External dependency: the bhoonidhi-downloader PyPI package (needs Python 3.10+,
+    i.e. QGIS 3.34 or newer). The plugin installs it automatically with pip into
+    your user Python folder the first time it runs (internet needed, no admin
+    rights). If that fails it tells you why and how to install it manually;
+    it retries on every QGIS start. Works with QGIS 3.34 through 4.x.
 
 tracker=https://github.com/SaptadeepGSA/Bhoonidhi_Downloader_via_QGIS/issues
 repository=https://github.com/SaptadeepGSA/Bhoonidhi_Downloader_via_QGIS
