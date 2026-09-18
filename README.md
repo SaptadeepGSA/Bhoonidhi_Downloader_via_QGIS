@@ -26,7 +26,7 @@ If it can't finish, a dialog explains *why* (no internet / proxy, a file locked 
 
     python -m pip install --user "bhoonidhi-downloader>=0.5.2,<0.6"
 
-(use the *OSGeo4W Shell* on Windows, or a terminal that uses QGIS's Python on macOS/Linux), then restart QGIS. The check runs again on every start, so nothing else is needed.
+(use the *OSGeo4W Shell* on Windows, or a terminal that uses QGIS's Python on macOS/Linux), then restart QGIS (or click the toolbar icon again). The plugin re-checks its dependency every time QGIS starts and every time you click its icon, and tries the automatic install again, so once the problem is fixed there is nothing else to do. When the install succeeds you'll see an **"All dependencies resolved"** message listing what was installed.
 
 ## Installation
 
