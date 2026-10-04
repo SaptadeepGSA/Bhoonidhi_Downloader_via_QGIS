@@ -47,6 +47,12 @@ From a zip: **Plugins → Manage and Install Plugins → Install from ZIP**.
 
 Downloaded scene archives (`.zip`) can contain several single-band product rasters. This plugin intentionally does **not** attempt to clip or mosaic them automatically — each raster found inside a downloaded scene is added to the QGIS project as its own layer, untouched.
 
+## Disclaimer and data credit
+
+This is an **unofficial, community-built tool**. It is not affiliated with, endorsed by, or supported by NRSC/ISRO. It works through the Bhoonidhi portal's web interface (via the `bhoonidhi-downloader` library), not through NRSC's separately documented [Bhoonidhi API](https://bhoonidhi.nrsc.gov.in/bhoonidhi-api/), so it may stop working if the portal changes.
+
+You use your own Bhoonidhi account, and your use of the data is governed by the portal's [Terms & Conditions / End User Licence Agreement](https://bhoonidhi.nrsc.gov.in/bhoonidhi/htmls/TnC.html). Bhoonidhi data is the property of NRSC/ISRO and must be acknowledged as: *"Name of the Data", National Remote Sensing Centre, ISRO, Government of India, Hyderabad, India.* Sentinel and Landsat data are subject to the terms of ESA and USGS respectively.
+
 ## License
 
 The plugin's own code is licensed under [GPL-3.0-or-later](LICENSE). It depends on [`bhoonidhi-downloader`](https://github.com/geovicco-dev/bhoonidhi-downloader), which is MIT-licensed.
