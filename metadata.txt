@@ -3,7 +3,7 @@ name=Bhoonidhi Downloader
 qgisMinimumVersion=3.34
 qgisMaximumVersion=4.99
 description=Search, browse and download open-access satellite imagery from ISRO's Bhoonidhi portal directly inside QGIS.
-version=0.1.9
+version=0.2.0
 author=Saptadeep Deshmukh
 email=pl.saptadeep492d@gmail.com
 
@@ -27,7 +27,8 @@ tracker=https://github.com/SaptadeepGSA/Bhoonidhi_Downloader_via_QGIS/issues
 repository=https://github.com/SaptadeepGSA/Bhoonidhi_Downloader_via_QGIS
 homepage=https://github.com/SaptadeepGSA/Bhoonidhi_Downloader_via_QGIS
 
-changelog=0.1.9 - Quick View is more reliable: it retries automatically (up to 2 more times), falls back to QGIS's own network settings (proxy/certificates), checks the downloaded image, cleans up broken cache files, and reports the exact reason if it still fails.
+changelog=0.2.0 - Login dialog now links the Bhoonidhi End User Licence Agreement and requires accepting it; parallel downloads are capped at 4; data credit reminder (ISRO-IRS) added to the download dialog and README.
+    0.1.9 - Quick View is more reliable: it retries automatically (up to 2 more times), falls back to QGIS's own network settings (proxy/certificates), checks the downloaded image, cleans up broken cache files, and reports the exact reason if it still fails.
     0.1.6-0.1.8 - Automatic dependency install with clear "all dependencies resolved" / failure messages; QGIS 3.34 to 4.x (Qt5 and Qt6) support; no repeated QGIS launches while installing; Windows, macOS and Linux support.
 
 tags=bhoonidhi,isro,satellite,remote sensing,download,imagery,nrsc

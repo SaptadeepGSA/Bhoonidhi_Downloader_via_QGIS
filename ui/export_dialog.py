@@ -61,10 +61,17 @@ class ExportDialog(QDialog):
         form.addRow("Output directory", out_row)
 
         self.parallel_spin = QSpinBox()
-        self.parallel_spin.setRange(1, 8)
+        self.parallel_spin.setRange(1, 4)
         self.parallel_spin.setValue(4)
         form.addRow("Parallel downloads", self.parallel_spin)
         layout.addLayout(form)
+
+        credit = QLabel(
+            "Please credit the data as <b>ISRO-IRS</b> when you publish or share it "
+            "(per the Bhoonidhi End User Licence Agreement)."
+        )
+        credit.setWordWrap(True)
+        layout.addWidget(credit)
 
         self.progress_bar = QProgressBar()
         self.progress_bar.setRange(0, 0)

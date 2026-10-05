@@ -4,13 +4,13 @@ A QGIS front-end for [bhoonidhi-downloader](https://github.com/geovicco-dev/bhoo
 
 ## Features
 
-- Login with your Bhoonidhi portal credentials — kept in memory only for the current QGIS session, never written to disk, and discarded when QGIS closes.
+- Login with your Bhoonidhi portal credentials (you must accept the portal's Terms and Conditions, linked in the login dialog) — kept in memory only for the current QGIS session, never written to disk, and discarded when QGIS closes.
 - Satellite/sensor pickers restricted to direct-download (open-access) products, refreshed live from the portal's archive on each session.
 - Date range and spatial filter (manual bounding box or draw-on-map) driven search.
 - Results table with pagination, select-all, and per-scene availability status.
 - Georeferenced quicklook previews rendered directly on the QGIS map canvas.
 - Session-scoped saved "queries" (slugs) you can revisit, rename, fork, or refresh within the same QGIS session — automatically deleted when QGIS closes.
-- Straightforward per-scene download to a folder of your choice.
+- Straightforward per-scene download to a folder of your choice (up to 4 parallel downloads).
 
 ## Requirements
 
@@ -51,7 +51,7 @@ Downloaded scene archives (`.zip`) can contain several single-band product raste
 
 This is an **unofficial, community-built tool**. It is not affiliated with, endorsed by, or supported by NRSC/ISRO. It works through the Bhoonidhi portal's web interface (via the `bhoonidhi-downloader` library), not through NRSC's separately documented [Bhoonidhi API](https://bhoonidhi.nrsc.gov.in/bhoonidhi-api/), so it may stop working if the portal changes.
 
-You use your own Bhoonidhi account, and your use of the data is governed by the portal's [Terms & Conditions / End User Licence Agreement](https://bhoonidhi.nrsc.gov.in/bhoonidhi/htmls/TnC.html). Bhoonidhi data is the property of NRSC/ISRO and must be acknowledged as: *"Name of the Data", National Remote Sensing Centre, ISRO, Government of India, Hyderabad, India.* Sentinel and Landsat data are subject to the terms of ESA and USGS respectively.
+You use your own Bhoonidhi account, and your use of the data is governed by the portal's [Terms & Conditions / End User Licence Agreement](https://bhoonidhi.nrsc.gov.in/bhoonidhi/htmls/TnC.html). Bhoonidhi data is the property of NRSC/ISRO. Under the portal's licence, acknowledge or credit the data with a text citation, and use the attribution **ISRO-IRS** in captions. Sentinel and Landsat data are subject to the terms of ESA and USGS respectively.
 
 ## License
 

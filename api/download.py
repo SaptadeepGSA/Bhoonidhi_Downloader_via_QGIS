@@ -23,6 +23,9 @@ class DownloadRunResult:
     needs_reauth: bool = False
 
 
+MAX_PARALLEL = 4  # stay within the portal's concurrent-download limits
+
+
 def download_scenes(
     slug: str,
     scenes: list[dict[str, Any]],
@@ -56,7 +59,7 @@ def download_scenes(
             slug,
             out_dir,
             select=scene_ids,
-            parallel=parallel,
+            parallel=max(1, min(parallel, MAX_PARALLEL)),
             force=force,
             on_progress=on_progress,
         )

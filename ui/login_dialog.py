@@ -5,6 +5,7 @@ from __future__ import annotations
 
 from qgis.PyQt.QtWidgets import (
     QApplication,
+    QCheckBox,
     QDialog,
     QDialogButtonBox,
     QFormLayout,
@@ -14,6 +15,8 @@ from qgis.PyQt.QtWidgets import (
 )
 
 from ..api import session as session_api
+
+EULA_URL = "https://bhoonidhi.nrsc.gov.in/bhoonidhi/htmls/TnC.html"
 
 
 class LoginDialog(QDialog):
@@ -38,6 +41,14 @@ class LoginDialog(QDialog):
         form.addRow("Password", self.password_edit)
         layout.addLayout(form)
 
+        self.eula_check = QCheckBox("I accept the Terms and Conditions.")
+        layout.addWidget(self.eula_check)
+        eula_link = QLabel(
+            f'<a href="{EULA_URL}">End User Licence Agreement (Bhoonidhi, NRSC/ISRO)</a>'
+        )
+        eula_link.setOpenExternalLinks(True)
+        layout.addWidget(eula_link)
+
         self.status_label = QLabel("")
         self.status_label.setStyleSheet("color: #b00020;")
         self.status_label.setWordWrap(True)
@@ -50,10 +61,16 @@ class LoginDialog(QDialog):
         buttons.rejected.connect(self.reject)
         layout.addWidget(buttons)
         self._buttons = buttons
+        self._ok_button = buttons.button(QDialogButtonBox.StandardButton.Ok)
+        self._ok_button.setEnabled(False)
+        self.eula_check.toggled.connect(self._ok_button.setEnabled)
 
         self.username_edit.setFocus()
 
     def _on_login(self):
+        if not self.eula_check.isChecked():
+            self.status_label.setText("Please accept the Terms and Conditions to continue.")
+            return
         username = self.username_edit.text().strip()
         password = self.password_edit.text()
         self.status_label.setText("Authenticating...")
@@ -63,6 +80,7 @@ class LoginDialog(QDialog):
         result = session_api.login(username, password)
 
         self._buttons.setEnabled(True)
+        self._ok_button.setEnabled(self.eula_check.isChecked())
         if result.ok:
             self._username = result.username
             self.accept()
